@@ -1,4 +1,16 @@
-// Approach 1 - build HTML string and sanitize HTML
+const membersTemplate = Handlebars.compile(
+  document.getElementById('members-template').innerHTML
+);
+
+const reposTemplate = Handlebars.compile(
+  document.getElementById('repos-template').innerHTML
+);
+
+Handlebars.registerHelper('relative-date', function(date) {
+  return moment(date).fromNow();
+});
+
+// Approach 1
 // $('#members-link').on('click', function(e) {
 //   e.preventDefault();
 //   $('#results').html('Loading ...');
@@ -7,67 +19,50 @@
 //     type: 'GET',
 //     url: 'https://api.github.com/orgs/emberjs/members'
 //   }).then((members) => {
-//     let html = '';
-//
-//     let results = members.forEach((member) => {
-//       html += `
-//         <img
-//           src="${member.avatar_url}"
-//           width="150"
-//           title="${member.login}"
-//           alt="image of ${member.login}">
-//       `;
+//     let html = membersTemplate({
+//       members
 //     });
 //
-//     let sanitizedHtml = DOMPurify.sanitize(html);
-//
-//     $('#results').html(sanitizedHtml);
+//     $('#results').html(html);
+//   }).catch((error) => {
+//     console.error(error);
 //   });
 // });
 
-// Approach 2 - Create nodes
-$('#members-link').on('click', function(e) {
+// Approach 2
+$('#members-link').on('click', async function(e) {
   e.preventDefault();
   $('#results').html('Loading ...');
 
-  $.ajax({
-    type: 'GET',
-    url: 'https://api.github.com/orgs/emberjs/members'
-  }).then((members) => {
-    let fragment = document.createDocumentFragment();
-
-    let results = members.forEach((member) => {
-      let image = document.createElement('img');
-      image.src = member.avatar_url;
-      image.width = 150;
-      image.title = member.login;
-      image.alt = `image of ${member.login}`;
-      fragment.append(image);
+  try {
+    let members = await $.ajax({
+      type: 'GET',
+      url: 'https://api.github.com/orgs/emberjs/members'
     });
 
-    $('#results').html(fragment);
-  });
+    let html = membersTemplate({
+      members
+    });
+
+    $('#results').html(html);
+  } catch (error) {
+    console.error(error);
+  }
 });
 
 // do this as a class exercise
-$('#repos-link').on('click', function(e) {
+$('#repos-link').on('click', async function(e) {
   e.preventDefault();
   $('#results').html('Loading ...');
 
-  $.getJSON('https://api.github.com/orgs/emberjs/repos').then((repos) => {
-    let html = '';
-
-    let results = repos.forEach((repo) => {
-      html += `
-        <div>
-          <h3>${repo.name}</h3>
-          <p>${repo.description}</p>
-        </div>
-      `;
+  try {
+    let repos = await $.getJSON('https://api.github.com/orgs/emberjs/repos');
+    let html = reposTemplate({
+      repos
     });
 
-    let sanitizedHtml = DOMPurify.sanitize(html);
-
-    $('#results').html(sanitizedHtml);
-  });
+    $('#results').html(html);
+  } catch (error) {
+    console.error(error);
+  }
 });

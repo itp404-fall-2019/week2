@@ -13,8 +13,38 @@
 
 <div id="results"></div>
 
+<template id="members-template">
+  {{#each members}}
+    <img
+      src="{{avatar_url}}"
+      width="150"
+      title="{{login}}"
+      alt="image of {{login}}">
+  {{/each}}
+</template>
+
+<template id="repos-template">
+  {{#each repos}}
+    <div>
+      <h3>{{name}}</h3>
+      <p>{{description}}</p>
+      <p>
+        {{#if archived}}
+          Archived
+        {{else}}
+          Active
+        {{/if}}
+      </p>
+      <p>
+        Created {{relative-date created_at}}
+      </p>
+    </div>
+  {{/each}}
+</template>
+
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-<script src="purify.min.js"></script>
+<script src="handlebars-v4.1.2.js"></script>
+<script src="moment.js"></script>
 <script src="main.js"></script>
 
 </body>
