@@ -66,3 +66,7 @@ $('#repos-link').on('click', async function(e) {
     console.error(error);
   }
 });
+
+$('#results').on('click', '.repo', function() {
+  alert('hi');
+});
